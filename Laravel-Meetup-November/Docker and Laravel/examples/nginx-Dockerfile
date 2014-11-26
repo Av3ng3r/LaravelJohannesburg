@@ -1,0 +1,31 @@
+# Nginx
+#
+# docker build -t="laravelmeetup/nginx" .
+#
+# Launch the server
+#
+# docker run -d --volumes-from laravel-data --name nginx laravelmeetup/nginx
+#
+# version 0.1
+
+FROM laravelmeetup/centos7-base
+MAINTAINER Warren Baker "warren@thepackethub.co.za" version: 1.0
+
+# Add NGINX Repository
+RUN rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
+# Install NGINX
+RUN yum -y install nginx.x86_64
+
+# Remove default NGINX file
+RUN rm -v /etc/nginx/nginx.conf
+
+# Copy a configuration file from the current directory
+ADD nginx.conf /etc/nginx/
+RUN mkdir -p /var/www/data/
+
+# Expose the http and https ports
+EXPOSE 80 443
+
+# Fire up the nginx daemon
+CMD [ "/usr/sbin/nginx" ]

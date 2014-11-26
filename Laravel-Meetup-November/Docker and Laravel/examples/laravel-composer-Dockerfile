@@ -1,0 +1,24 @@
+# Laravel Composer
+#
+# docker build -t="laravelmeetup/laravel-composer" .
+#
+# Launch
+# docker run --volumes-from laravel-data --rm laravelmeetup/laravel-composer your_composer_command_here
+# 
+# version 1.0
+
+FROM laravelmeetup/centos7-base
+MAINTAINER Warren Baker "warren@thepackethub.co.za" version: 1.0
+
+# Get our PHP goodness
+RUN yum -y install php.x86_64 php-bcmath.x86_64 php-curl.x86_64 \
+    php-pdo.x86_64 php-mcrypt.x86_64 \
+    php-xml.x86_64 php-xmlrpc.x86_64 && \
+    curl -sS https://getcomposer.org/installer | php && \    
+    mv composer.phar /usr/local/bin/composer
+
+RUN mkdir -p /var/data/www
+VOLUME ["/var/www/data"]
+
+ENTRYPOINT ["composer"]
+CMD ["--help"]

@@ -1,0 +1,38 @@
+# Laravel PHPFPM
+#
+# docker build -t="laravelmeetup/phpfpm" .
+#
+# Launch the server
+#
+# docker run -d --volumes-from laravel-data --name laravel-phpfpm laravelmeetup/phpfpm
+#
+#
+# version 1.0
+
+FROM laravelmeetup/centos7-base
+MAINTAINER Warren Baker "warren@thepackethub.co.za" version: 1.0
+
+# Install PHP-FPM and modules
+RUN yum -y install php.x86_64 php-bcmath.x86_64 php-curl.x86_64 php-fpm.x86_64 \
+    php-pdo.x86_64 php-mysql.x86_64l php-mcrypt.x86_64 \
+    php-xml.x86_64 php-xmlrpc.x86_64
+
+# Clean up
+RUN yum -y clean all
+
+# Update FPM to listen on port 9000
+RUN sed -e '/^listen/clisten = 0.0.0.0:9000' \
+    -e 's/^listen.allowed_clients/;listen.allowed_clients/' \
+    -e '/^;catch_workers_output/ccatch_workers_output = yes' \
+    -i /etc/php-fpm.d/www.conf && \
+    sed -e 's/;date.timezone =.*/date.timezone = Africa\/Johannesburg/' \
+    -e 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' \
+    -e 's/display_errors = Off/display_errors = stderr/' \
+    -i /etc/php.ini
+
+
+# Volumes add our Volume
+VOLUME [ "/var/www/data" ]
+
+# Fire up the php-fpm daemon
+ENTRYPOINT ["php-fpm","-F"]

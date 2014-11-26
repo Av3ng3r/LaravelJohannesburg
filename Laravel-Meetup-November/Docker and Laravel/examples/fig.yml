@@ -1,0 +1,46 @@
+# Laravel Data container
+laravel-data:
+  image: laravelmeetup/laravel-data
+  environment:
+    - "TZ=Africa/Johannesburg"
+  dns:
+    - 172.17.42.1
+  volume:
+    - /var/www/data
+
+laravel-composer:  
+  image: laravelmeetup/laravel-composer
+  volumes_from:
+    - laravel-data
+
+laravel-artisan:  
+  image: laravelmeetup/laravel-artisan
+  volumes_from:
+    - laravel-data
+
+laravel-nginx:
+  image: laravelmeetup/nginx
+  environment:
+    - "TZ=Africa/Johannesburg"
+  dns:
+    - 172.17.42.1
+  volumes_from:
+    - laravel-data
+  links:
+    - laravel-phpfpm
+  ports:
+    - 80:80
+    - 443:443
+
+laravel-phpfpm:
+  image: laravelmeetup/phpfpm
+  environment:
+    - "TZ=Africa/Johannesburg"
+  dns:
+    - 172.17.42.1
+  volumes_from:
+    - laravel-data
+  mem_limit: 256m
+  ports:
+    - 9000
+

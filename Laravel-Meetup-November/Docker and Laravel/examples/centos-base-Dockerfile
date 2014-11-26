@@ -1,0 +1,15 @@
+# CentOS Distro
+#
+# docker build -t="laravelmeetup/centos7-base" .
+#
+# version 1.0
+
+FROM centos:centos7
+MAINTAINER Warren Baker "warren@thepackethub.co.za" version: 1.0
+
+# Set date so Docker will update its cache if the date changes
+ENV REFRESHED_AT 2014-11-26
+
+# Update the image with latest packages
+RUN yum -y -q install epel-release
+RUN yum -y -q upgrade ; yum -y clean all
